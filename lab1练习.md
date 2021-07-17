@@ -437,6 +437,8 @@ readsect(void *dst, uint32_t secno) {
 
 一般主板有2个IDE通道，每个通道可以接2个IDE硬盘。访问第一个硬盘的扇区可设置IO地址寄存器`0x1f0-0x1f7`实现的，具体参数见下表。一般第一个IDE通道通过访问IO地址`0x1f0-0x1f7`来实现，第二个IDE通道通过访问`0x170-0x17f`实现。每个通道的主从盘的选择通过第6个IO偏移地址寄存器来设置。从`outb()`可以看出这里是用LBA模式的PIO（Program IO）方式来访问硬盘的。从磁盘IO地址和对应功能表可以看出，该函数一次只读取一个扇区。`readseg`简单包装了`readsect`，可以从设备读取任意长度的内容。 
 
+**LBA模式和CHS模式的区别**
+
 ```c++
 static void
     readseg(uintptr_t va, uint32_t count, uint32_t offset) {//这个va是啥 count是啥 offset是啥
@@ -602,6 +604,7 @@ SETGATE函数的实现:
 ```c++
 void
 idt_init(void) {
+    //extern关键字的作用：拓展作用区域 一个是提前使用 一个是用外部的
     extern uintptr_t __vectors[];  //保存在vectors.S中的256个中断处理例程的入口地址数组
     int i;
    //使用SETGATE宏，对中断描述符表中的每一个表项进行设置
@@ -685,3 +688,4 @@ idt_init(void) {
 
 # 拓展练习
 
+参考：https://blog.csdn.net/weixin_43995093/article/details/93190327
